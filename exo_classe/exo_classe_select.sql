@@ -33,6 +33,14 @@ SELECT CONCAT(au_lname," ",au_fname) AS "Nom et Prenom" , CONCAT(address," ",cit
 --8
 --SELECT * FROM publishers WHERE country = "USA" OR country = "France" ;
 SELECT title, title_id from titles GROUP BY title,title_id;
-
-
-
+-- Nnom et prenom de chaque employe avec l'editeur pour qui il travaille
+SELECT CONCAT(emp.lname," ", emp.fname) FROM publishers as pub INNER JOIN employee as emp ON pub.pub_id = emp.pub_id;
+-- Liste des editeurs et des magasins se trouvant dans le meme etat
+SELECT pub_name AS "Editeur" , stor_name AS "Magasin", publishers.state AS Etat
+FROM publishers  INNER JOIN  stores ON  publishers.state = stores.state;
+-- Liste des livres qui ont ete vendus dans l'Etat de Washington
+SELECT title  as "Livre", qty as "Quantite", city as "Ville", state as "Etat"  
+FROM sales 
+INNER JOIN titles ON titles.title_id = sales.title_id  
+INNER JOIN stores ON sales.stor_id = stores.stor_id 
+WHERE stores.state="WA";
