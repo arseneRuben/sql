@@ -16,8 +16,8 @@ CREATE TABLE succursales(
     tel1 VARCHAR(13)  NULL,
     tel2 VARCHAR(13)  NULL,
     CONSTRAINT CHK_code CHECK(code RLIKE '[A][0-9]{4}'),
-    CONSTRAINT CHK_tel1  CHECK(tel1 RLIKE '(...)...[-]....'),
-    CONSTRAINT CHK_tel2  CHECK(tel2 RLIKE '(...)...[-]....')
+    CONSTRAINT CHK_tel1  CHECK(tel1 RLIKE '\\([0-9]{3}\\)[0-9]{3}-[0-9]{4}'),
+    CONSTRAINT CHK_tel2  CHECK(tel2 RLIKE '\\([0-9]{3}\\)[0-9]{3}-[0-9]{4}')
 );
 
 CREATE TABLE clients(
@@ -28,7 +28,7 @@ CREATE TABLE clients(
     adresse VARCHAR(30) NOT NULL,
     tel VARCHAR(14)  NULL,
     CONSTRAINT CHK_client_id CHECK(id RLIKE '[C][0-9]{9}'),
-    CONSTRAINT CHK_tel  CHECK(tel RLIKE '(...)...[-]....')
+    CONSTRAINT CHK_tel  CHECK(tel RLIKE '^[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$')
 );
 CREATE TABLE types_comptes(
     code char(1)   PRIMARY KEY ,
@@ -39,21 +39,19 @@ CREATE TABLE comptes(
     id int AUTO_INCREMENT PRIMARY KEY,
     client_id CHAR(10) NOT NULL REFERENCES clients(id),
     type_compte char(1) NOT NULL REFERENCES types_comptes(code),
-    date_ouverture VARCHAR(10)  NOT NULL,
-    solde DECIMAL(10,2) NOT NULL,
-    CONSTRAINT CHK_date CHECK(date_ouverture RLIKE '([0-9]{2})/[0-9]{2}/[0-9]{2}')
+    date_ouverture DATETIME NOT NULL,
+    solde DECIMAL(10,2) NOT NULL
 );
 
 
 
 CREATE TABLE Operations(
-    id int   PRIMARY KEY ,
+    id int   PRIMARY KEY AUTO_INCREMENT,
     compte_id int  NULL REFERENCES comptes(id),
-    DatOperation  VARCHAR(10) NOT NULL,
+    DatOperation  DATETIME NOT NULL,
     typeOp char(1) NOT NULL,
     montant DECIMAL(10,2) NOT NULL,
-    CONSTRAINT CHK_type_operation  CHECK(typeOp RLIKE '[DR]'),
-    CONSTRAINT CHK_dateOperation CHECK(datOperation RLIKE '([0-9]{2})/[0-9]{2}/[0-9]{2}')
+    CONSTRAINT CHK_type_operation  CHECK(typeOp RLIKE '[DR]')
 );
 
 /**********************************************/
@@ -79,31 +77,30 @@ INSERT Types_Comptes VALUES ('C','Compte cheque');
 INSERT Types_Comptes VALUES ('E','Compte epargne');
 INSERT Types_Comptes VALUES ('V','Compte Visa');
 -- In table Comptes
-INSERT Comptes (Client_Id, Type_Compte,Date_Ouverture, Solde) VALUES ('C100111001', 'C', '10/10/96', 5000);
-INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111001', 'E', '11/20/96', 3000);
-INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111002', 'C', '03/13/97',12300);
-INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111003', 'C', '12/23/98', 1200);
-INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111003', 'V', '10/09/98', 5000);
-INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100112001', 'C', '09/15/98', 7600);
-INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100113002', 'C', '03/24/98', 1300);
-INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100113003', 'C', '12/04/95', 4500);
+INSERT Comptes (Client_Id, Type_Compte,Date_Ouverture, Solde) VALUES ('C100111001', 'C', STR_TO_DATE('10/10/96', "%m/%d/%y"), 5000);
+INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111001', 'E', STR_TO_DATE('11/20/96', "%m/%d/%y"), 3000);
+INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111002', 'C', STR_TO_DATE('03/13/97', "%m/%d/%y"),12300);
+INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111003', 'C', STR_TO_DATE('12/23/98', "%m/%d/%y"), 1200);
+INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100111003', 'V', STR_TO_DATE('10/09/98', "%m/%d/%y"), 5000);
+INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100112001', 'C', STR_TO_DATE('09/15/98', "%m/%d/%y"), 7600);
+INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100113002', 'C', STR_TO_DATE('03/24/98', "%m/%d/%y"), 1300);
+INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100113003', 'C', STR_TO_DATE('12/04/95', "%m/%d/%y"), 4500);
 -- In table Operations
 
 
-/**
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (1, '12/13/97','R', 60);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (2, '12/15/97','D', 300);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (1, '12/20/97','D', 800);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (2, '12/23/97','R', 100);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, '03/20/97','D', 1000);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, '03/25/97','R', 40);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, '05/20/97','D', 500);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, '08/20/97','R', 80);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (4, '12/25/98','D', 1000);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (4, '12/01/99','D', 100);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (5, '09/11/98','R', 100);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (5, '11/13/98','D', 30);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (5, '10/12/98','D', 70);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (4, '10/01/99','R', 100);
-INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (7, '02/04/99','D', 1000);
-**/
+
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (1, STR_TO_DATE('12/13/97', "%m/%d/%y"),'R', 60);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (2, STR_TO_DATE('12/15/97', "%m/%d/%y"),'D', 300);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (1, STR_TO_DATE('12/20/97', "%m/%d/%y"),'D', 800);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (2, STR_TO_DATE('12/23/97', "%m/%d/%y"),'R', 100);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, STR_TO_DATE('03/20/97', "%m/%d/%y"),'D', 1000);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, STR_TO_DATE( '03/25/97', "%m/%d/%y"),'R', 40);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, STR_TO_DATE('05/20/97', "%m/%d/%y"),'D', 500);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (3, STR_TO_DATE('08/20/97', "%m/%d/%y"),'R', 80);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (4, STR_TO_DATE('12/25/98', "%m/%d/%y"),'D', 1000);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (4, STR_TO_DATE('12/01/99', "%m/%d/%y"),'D', 100);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (5, STR_TO_DATE('09/11/98', "%m/%d/%y"),'R', 100);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (5, STR_TO_DATE('11/13/98', "%m/%d/%y"),'D', 30);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (5, STR_TO_DATE('10/12/98', "%m/%d/%y"),'D', 70);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (4, STR_TO_DATE('10/01/99', "%m/%d/%y"),'R', 100);
+INSERT Operations (Compte_Id, DatOperation, TypeOp, Montant) VALUES (7, STR_TO_DATE('02/04/99', "%m/%d/%y"),'D', 1000);
