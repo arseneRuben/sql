@@ -50,3 +50,52 @@ ORDER BY    prenom DESC, typeOp ASC;
 SELECT nom, prenom , solde 
 FROM clients INNER JOIN comptes ON clients.id = comptes.client_id 
 WHERE solde > (SELECT AVG(solde) FROM comptes WHERE type_compte = 'C' );
+
+--8  
+SELECT clients.id AS "Id Client",   type_compte AS "TypeCompte",  solde AS "Solde Depart", 
+(Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='D'  AND comptes.client_id = clients.id ) AS Debits,
+ (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='R' AND comptes.client_id = clients.id ) AS Credits
+FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id ;
+
+
+--9  LEs 4 vues
+CREATE  OR REPLACE VIEW AgenceCentre 
+AS
+SELECT clients.nom as Nom, Prenom, type_compte AS Compte, Solde
+FROM clients INNER JOIN comptes ON clients.id = comptes.client_id 
+             INNER JOIN succursales ON clients.code_succursale = succursales.code 
+WHERE succursales.nom = "Succursale Centre-Ville";
+
+CREATE  OR REPLACE VIEW AgenceRivesud 
+AS
+SELECT clients.nom as Nom, Prenom, type_compte AS Compte, Solde
+FROM clients INNER JOIN comptes ON clients.id = comptes.client_id 
+             INNER JOIN succursales ON clients.code_succursale = succursales.code 
+WHERE succursales.nom = "Succursale Rive-Sud"; -- Respecte le nom des villes
+
+CREATE   OR REPLACE VIEW AgenceLaval 
+AS
+SELECT clients.nom as Nom, Prenom, type_compte AS Compte, Solde
+FROM clients INNER JOIN comptes ON clients.id = comptes.client_id 
+             INNER JOIN succursales ON clients.code_succursale = succursales.code 
+WHERE succursales.nom = "Succursale Laval";
+
+CREATE  OR REPLACE VIEW SuccurcaseRiveNDG 
+AS
+SELECT clients.nom as Nom, Prenom, type_compte AS Compte, Solde
+FROM clients INNER JOIN comptes ON clients.id = comptes.client_id 
+             INNER JOIN succursales ON clients.code_succursale = succursales.code 
+WHERE succursales.nom = "Succursale NDG";
+
+--10 Liste des clients qui n'ont jamais effectué d'opérations
+SELECT nom, prenom 
+FROM Clients 
+WHERE id IN(
+SELECT  clients.id
+FROM clients RIGHT JOIN comptes ON clients.id = comptes.client_id
+              EXCEPT
+SELECT clients.id
+FROM clients RIGHT JOIN comptes ON clients.id = comptes.client_id
+               RIGHT JOIN operations ON comptes.id = operations.compte_id
+               
+);

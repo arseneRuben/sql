@@ -26,9 +26,9 @@ CREATE TABLE clients(
     nom VARCHAR(25) NOT NULL,
     prenom VARCHAR(30) NOT NULL,
     adresse VARCHAR(30) NOT NULL,
-    tel VARCHAR(14)  NULL,
+    tel VARCHAR(14) ,
     CONSTRAINT CHK_client_id CHECK(id RLIKE '[C][0-9]{9}'),
-    CONSTRAINT CHK_tel  CHECK(tel RLIKE '^[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$')
+    CONSTRAINT CHK_tel  CHECK(tel RLIKE '\\([0-9]{3}\\)[0-9]{3}-[0-9]{4}')
 );
 CREATE TABLE types_comptes(
     code char(1)   PRIMARY KEY ,
@@ -86,6 +86,8 @@ INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C1001120
 INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100113002', 'C', STR_TO_DATE('03/24/98', "%m/%d/%y"), 1300);
 INSERT Comptes (Client_Id, Type_Compte, Date_Ouverture, Solde) VALUES ('C100113003', 'C', STR_TO_DATE('12/04/95', "%m/%d/%y"), 4500);
 -- In table Operations
+
+
 
 
 
