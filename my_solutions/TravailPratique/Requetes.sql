@@ -32,8 +32,21 @@ HAVING COUNT(operations.id)>0;
 --5 Liste des clients et le nombre d'operation en fonction du type
 SELECT Nom, Prenom, typeOp AS "TypeOp", COUNT(operations.id) AS "Nombres d'operations", SUM(operations.montant) AS "Montant total des operations"
 FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id 
-              INNER JOIN operations ON comptes.id = operations.compte_id
-              INNER JOIN types_comptes ON comptes.type_compte = types_comptes.code
+              INNER JOIN operations ON comptes.id = operations.compte_id       
 GROUP BY    nom , typeOp 
 ORDER BY    prenom DESC, typeOp ASC;
--- 6Total des operationd de debit et de credit pour les trois types de comptes
+-- 6 Total des operations de debit et de credit pour les trois types de comptes
+
+ SELECT DISTINCT code as "Type de compte",
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1997   AND comptes.type_compte = code) AS "debit 97 " , 
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'C'  AND YEAR(datOperation)=1997  AND comptes.type_compte = code) AS "credit 97",
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1998   AND comptes.type_compte = code) AS "debit 98 " , 
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'C'  AND YEAR(datOperation)=1998  AND comptes.type_compte = code) AS "credit 98",
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1999  AND comptes.type_compte = code) AS "debit 99 ", 
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'C'  AND YEAR(datOperation)=1999  AND comptes.type_compte = code) AS "credit 99"
+ FROM types_comptes  ;
+
+ --7 Liste des clients dont le solde du compte cheque depasse la moyenne des soldes de tous les comptes cheque.
+SELECT nom, prenom , solde 
+FROM clients INNER JOIN comptes ON clients.id = comptes.client_id 
+WHERE solde > (SELECT AVG(solde) FROM comptes WHERE type_compte = 'C' );

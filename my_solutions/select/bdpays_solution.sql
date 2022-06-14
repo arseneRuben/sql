@@ -46,3 +46,10 @@ SELECT au_lname , au_fname FROM authors  WHERE au_lname RLIKE "^D"  OR au_lname 
 SELECT au_lname , au_fname FROM authors    WHERE  au_lname RLIKE "....." AND au_lname RLIKE "mith$" ;
 --23 Donner le nom et le prénom des auteurs en une seule colonne qui sera nommée "Nom et prénom d'auteur" ainsi que les états, par ordre croissant des états. 
 SELECT au_lname , au_fname AS "Nom et prenom d'auteur", state FROM authors ORDER BY state ASC;
+
+--Creer une vue affichant les magasins ayant vendu plus de 80 livres
+CREATE VIEW best_sales AS SELECT  stor_name as magasin, title as titre
+FROM stores INNER JOIN sales ON sales.stor_id = stores.stor_id
+			 INNER JOIN titles ON sales.title_id = titles.title_id
+GROUP BY sales.stor_id
+HAVING COUNT(sales.title_id)>80;
