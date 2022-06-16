@@ -111,10 +111,11 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS mouvement100;
 CREATE PROCEDURE mouvement100()
 BEGIN
-    START TRANSACTION;
+    
         INSERT INTO operations(Compte_Id, DatOperation, TypeOp, Montant) VALUES (2,NOW(), 'R', 100),(5,NOW(), 'D', 100);
         UPDATE comptes SET solde = solde-100 WHERE id=2;
         UPDATE comptes SET solde = solde+100 WHERE id=5;
+    
     COMMIT;
 END; //
 DELIMITER ;
