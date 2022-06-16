@@ -90,7 +90,20 @@ SELECT DISTINCT COUNT(titles.title_id) AS "nombre de Livres non vendus" from tit
 LEFT JOIN sales on titles.title_id = sales.title_id
 WHERE sales.stor_id IS NULL;
 
-
+-- 16 avec IN
+SELECT titles.title_id, titles.title
+FROM titles
+WHERE title_id NOT IN (
+    SELECT titles.title_id FROM titles INNER JOIN sales on titles.title_id = sales.title_id
+    WHERE ord_date BETWEEN str_to_date('01011993', '%d%m%Y') AND str_to_date('31121993', '%d%m%Y')
+);
+-- 16 avec EXIST
+SELECT title_id, title
+FROM titles t
+WHERE  NOT EXISTS (
+    SELECT * FROM  sales 
+    WHERE t.title_id = sales.title_id AND ord_date BETWEEN str_to_date('01011993', '%d%m%Y') AND str_to_date('31121993', '%d%m%Y')
+);
 
 
 
