@@ -12,11 +12,11 @@ SELECT * FROM succursales;
 SELECT * FROM types_comptes;
 
 --2 Écrire la requête qui permet d'afficher la liste des comptes clients:
-SELECT id AS "Identificateur", nom, prenom, description AS "Type de compte"
+SELECT clients.id AS "Identificateur", nom, prenom, description AS "Type de compte"
 FROM clients INNER JOIN comptes ON clients.id = comptes.client_id 
             INNER JOIN types_comptes ON comptes.type_compte = types_comptes.code;
 --3 Liste de clients ayant  un compte avec les operation qu'ils ont effectues
-SELECT Nom, Prenom,  DATE_FORMAT(datOperation, "%b %d %Y %h:%i%p") AS "Date Operation" , code AS "Type de Compte" , typeOp AS "Type Operation"
+SELECT nom, prenom,  DATE_FORMAT(datOperation, "%b %d %Y %h:%i%p") AS "Date Operation" , code AS "Type de Compte" , typeOp AS "Type Operation"
 FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id 
               INNER JOIN operations ON comptes.id = operations.compte_id
               INNER JOIN types_comptes ON comptes.type_compte = types_comptes.code
@@ -30,7 +30,7 @@ GROUP BY clients.id
 HAVING COUNT(operations.id)>0;
 
 --5 Liste des clients et le nombre d'operation en fonction du type
-SELECT Nom, Prenom, typeOp AS "TypeOp", COUNT(operations.id) AS "Nombres d'operations", SUM(operations.montant) AS "Montant total des operations"
+SELECT nom, prenom, typeOp AS "TypeOp", COUNT(operations.id) AS "Nombres d'operations", SUM(operations.montant) AS "Montant total des operations"
 FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id 
               INNER JOIN operations ON comptes.id = operations.compte_id       
 GROUP BY    nom , typeOp 
@@ -61,7 +61,7 @@ SELECT clients.id AS "Id Client",   type_compte AS "TypeCompte",  solde AS "Sold
  
 FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id 
 GROUP BY  clients.id, type_compte
-HAVING NOT(Debits IS NULL);
+HAVING NOT(debits IS NULL);
 
 
 --9  LEs 4 vues
@@ -95,7 +95,7 @@ WHERE succursales.nom = "Succursale NDG";
 
 --10 Liste des clients qui n'ont jamais effectué d'opérations
 SELECT nom, prenom 
-FROM Clients 
+FROM clients 
 WHERE id IN(  -- Ici je prend la liste des clients ayant un comptes
 SELECT  clients.id
 FROM clients RIGHT JOIN comptes ON clients.id = comptes.client_id
