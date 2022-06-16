@@ -38,12 +38,12 @@ ORDER BY    prenom DESC, typeOp ASC;
 -- 6 Total des operations de debit et de credit pour les trois types de comptes
 
  SELECT DISTINCT code as "Type de compte",
-         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1997   AND comptes.type_compte = code) AS "debit 97 " , 
-         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'C'  AND YEAR(datOperation)=1997  AND comptes.type_compte = code) AS "credit 97",
-         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1998   AND comptes.type_compte = code) AS "debit 98 " , 
-         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'C'  AND YEAR(datOperation)=1998  AND comptes.type_compte = code) AS "credit 98",
-         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1999  AND comptes.type_compte = code) AS "debit 99 ", 
-         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'C'  AND YEAR(datOperation)=1999  AND comptes.type_compte = code) AS "credit 99"
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1997   AND comptes.type_compte = code) AS " 1997 credit" , 
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'R'  AND YEAR(datOperation)=1997  AND comptes.type_compte = code) AS "  1997 debit",
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1998   AND comptes.type_compte = code) AS " 1998 credit " , 
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'R'  AND YEAR(datOperation)=1998  AND comptes.type_compte = code) AS " 1998 debit",
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'D' AND YEAR(datOperation)=1999  AND comptes.type_compte = code) AS " 1999 credit", 
+         (SELECT IFNULL( SUM(montant),0)  FROM operations INNER JOIN comptes ON comptes.id = operations.compte_id   WHERE typeOp = 'R'  AND YEAR(datOperation)=1999  AND comptes.type_compte = code) AS " 1999 debit "
  FROM types_comptes  ;
 
  --7 Liste des clients dont le solde du compte cheque depasse la moyenne des soldes de tous les comptes cheque.
