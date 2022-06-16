@@ -48,7 +48,7 @@ WHERE state IN('CA','WA');
 
 -- 9 Liste des éditeurs et leurs employés dont job_lvl est > 200
 Select publishers.pub_name as "Editeur", CONCAT(fname , ' ' , lname) AS "Employee Name", job_lvl
-FROM Employee
+FROM employee
 INNER JOIN publishers on employee.pub_id = publishers.pub_id
 INNER JOIN jobs on employee.job_id = jobs.job_id
 WHERE job_lvl >200
@@ -68,22 +68,21 @@ WHERE advance =( SELECT Max(advance) FROM titles);
 -- 12 Catégorie d’employés qui a le plus grand nombre d’employés ? Afficher cette catégorie et le nombre d'employés.
 
 SELECT job_id , count(emp_id) AS "Nombre d'employes"
-FROM Employee
+FROM employee
 GROUP BY job_id
 HAVING count(emp_id) >= ALL (SELECT count(emp_id) FROM employee GROUP BY job_id);
 
 -- 13 Nombre d'employés embauchés chaque année
 SELECT YEAR(hire_date) as "Annee", COUNT(emp_id) AS "Nombre d'employes"
-FROM Employee WHERE COUNT(emp_id) =  (SELECT  COUNT(emp_id) FROM Employee
-GROUP BY YEAR(hire_date))
+FROM employee
 GROUP BY YEAR(hire_date);
 
 
 --14 Plus grand nombre d’employés qui ont été embauchés dans la même année?
 SELECT YEAR(hire_date) as "Annee", COUNT(emp_id) AS  employes
-FROM Employee
+FROM employee
 GROUP BY YEAR(hire_date)
-HAVING employes >= ALL (SELECT COUNT(emp_id) FROM Employee GROUP BY YEAR(hire_date));
+HAVING employes >= ALL (SELECT COUNT(emp_id) FROM employee GROUP BY YEAR(hire_date));
 
 
 --  Nombre de livres non vendus
