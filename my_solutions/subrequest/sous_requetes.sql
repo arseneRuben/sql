@@ -83,9 +83,7 @@ GROUP BY YEAR(hire_date);
 SELECT YEAR(hire_date) as "Annee", COUNT(emp_id) AS  employes
 FROM Employee
 GROUP BY YEAR(hire_date)
-HAVING employes >= ALL (SELECT COUNT(emp_id) AS  employes
-FROM Employee
-GROUP BY YEAR(hire_date));
+HAVING employes >= ALL (SELECT COUNT(emp_id) FROM Employee GROUP BY YEAR(hire_date));
 
 
 --  Nombre de livres non vendus

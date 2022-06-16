@@ -107,18 +107,16 @@ FROM clients RIGHT JOIN comptes ON clients.id = comptes.client_id
 );
 
 --11 
-DROP PROCEDURE IF EXISTS mouvement100;
-
 DELIMITER //
+DROP PROCEDURE IF EXISTS mouvement100;
 CREATE PROCEDURE mouvement100()
 BEGIN
-    SET AUTOCOMMIT=0;
     START TRANSACTION;
-        INSERT INTO operations VALUES (2,NOW(), 'R', 100),(5,NOW(), 'D', 100);
-        UPDATE comptes SET soldes = soldes-100 WHERE id=2;
-        UPDATE comptes SET soldes = soldes+100 WHERE id=5;
+        INSERT INTO operations(Compte_Id, DatOperation, TypeOp, Montant) VALUES (2,NOW(), 'R', 100),(5,NOW(), 'D', 100);
+        UPDATE comptes SET solde = solde-100 WHERE id=2;
+        UPDATE comptes SET solde = solde+100 WHERE id=5;
     COMMIT;
 END; //
 DELIMITER ;
 
-CALL mouvement100();
+CALL mouvement100;
