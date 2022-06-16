@@ -54,8 +54,14 @@ WHERE solde > (SELECT AVG(solde) FROM comptes WHERE type_compte = 'C' );
 --8  
 SELECT clients.id AS "Id Client",   type_compte AS "TypeCompte",  solde AS "Solde Depart", 
 (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='D'  AND comptes.client_id = clients.id ) AS Debits,
- (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='R' AND comptes.client_id = clients.id ) AS Credits
-FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id ;
+ (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='R' AND comptes.client_id = clients.id ) AS Credits,
+ solde - (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='D'  AND comptes.client_id = clients.id ) 
+        +  (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='R' AND comptes.client_id = clients.id )
+  As "Solde final"
+ 
+FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id 
+GROUP BY  clients.id, type_compte
+HAVING NOT(Debits IS NULL);
 
 
 --9  LEs 4 vues
@@ -90,12 +96,29 @@ WHERE succursales.nom = "Succursale NDG";
 --10 Liste des clients qui n'ont jamais effectué d'opérations
 SELECT nom, prenom 
 FROM Clients 
-WHERE id IN(
+WHERE id IN(  -- Ici je prend la liste des clients ayant un comptes
 SELECT  clients.id
 FROM clients RIGHT JOIN comptes ON clients.id = comptes.client_id
-              EXCEPT
-SELECT clients.id
+              EXCEPT  -- Ici je fais la difference ensembliste qui permettra de retrouver les client qui n'ont pas fait d'operations
+SELECT clients.id  -- Ici je prend la liste des clients ayant un compte avec operation
 FROM clients RIGHT JOIN comptes ON clients.id = comptes.client_id
                RIGHT JOIN operations ON comptes.id = operations.compte_id
                
 );
+
+--11 
+DROP PROCEDURE IF EXISTS mouvement100;
+
+DELIMITER //
+CREATE PROCEDURE mouvement100()
+BEGIN
+    SET AUTOCOMMIT=0;
+    START TRANSACTION;
+        INSERT INTO operations VALUES (2,NOW(), 'R', 100),(5,NOW(), 'D', 100);
+        UPDATE comptes SET soldes = soldes-100 WHERE id=2;
+        UPDATE comptes SET soldes = soldes+100 WHERE id=5;
+    COMMIT;
+END; //
+DELIMITER ;
+
+CALL mouvement100();
