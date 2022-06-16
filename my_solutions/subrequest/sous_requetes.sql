@@ -80,9 +80,12 @@ GROUP BY YEAR(hire_date);
 
 
 --14 Plus grand nombre d’employés qui ont été embauchés dans la même année?
-SELECT YEAR(hire_date) as "Annee", MAX(COUNT(emp_id)) AS "Nombre d'employes"
+SELECT YEAR(hire_date) as "Annee", COUNT(emp_id) AS  employes
 FROM Employee
-GROUP BY YEAR(hire_date);
+GROUP BY YEAR(hire_date)
+HAVING employes >= ALL (SELECT COUNT(emp_id) AS  employes
+FROM Employee
+GROUP BY YEAR(hire_date));
 
 
 --  Nombre de livres non vendus
