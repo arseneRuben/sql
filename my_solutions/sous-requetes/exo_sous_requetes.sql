@@ -67,10 +67,10 @@ WHERE advance =( SELECT Max(advance) FROM titles);
 
 -- 12 Catégorie d’employés qui a le plus grand nombre d’employés ? Afficher cette catégorie et le nombre d'employés.
 
-SELECT jobs.job_id , count(emp_id) AS "Nombre d'employes"
+SELECT job_id , count(emp_id) AS "Nombre d'employes"
 FROM Employee
-INNER JOIN jobs on employee.job_id = jobs.job_id
-GROUP BY jobs.job_id;
+GROUP BY job_id
+HAVING count(emp_id) >= ALL (SELECT count(emp_id) FROM employee GROUP BY job_id);
 
 -- 13 Nombre d'employés embauchés chaque année
 SELECT YEAR(hire_date) as "Annee", COUNT(emp_id) AS "Nombre d'employes"
