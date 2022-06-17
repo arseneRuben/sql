@@ -52,15 +52,13 @@ FROM clients INNER JOIN comptes ON clients.id = comptes.client_id
 WHERE solde > (SELECT AVG(solde) FROM comptes WHERE type_compte = 'C' );
 
 --8  
-SELECT comptes.id AS "Id Client", clients.id AS "Id Client",   type_compte AS "TypeCompte",  solde AS "Solde Depart", 
+SELECT comptes.id AS "Id Compte", clients.id AS "Id Client",   type_compte AS "TypeCompte",  solde AS "Solde Depart", 
 (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='D'  AND comptes.client_id = clients.id ) AS Debits,
  (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='R' AND comptes.client_id = clients.id ) AS Credits,
  solde - (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='D'  AND comptes.client_id = clients.id ) 
         +  (Select SUM(montant) FROM operations  INNER JOIN comptes ON comptes.id = operations.compte_id  WHERE  operations.typeOp='R' AND comptes.client_id = clients.id )
   As "Solde final"
- 
 FROM  clients INNER JOIN comptes ON clients.id = comptes.client_id 
-        
 GROUP BY  clients.id, type_compte
 HAVING NOT(debits IS NULL);
 
