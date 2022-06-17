@@ -22,7 +22,7 @@ WHERE (price) > ( SELECT AVG(price) FROM titles WHERE title like 'o%' );
 SELECT title AS "Titres"
 FROM titles titres
 WHERE NOT EXISTS (
-SELECT title
+SELECT title_id
 FROM sales AS s
 WHERE s.title_id = titres.title_id)
 ORDER BY title ASC;
